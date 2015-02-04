@@ -1,0 +1,5 @@
+Loading ePL program ..
+  false = \ true & false
+  as &[=[BoolConst(false),\[BoolConst(true)]],BoolConst(false)]
+Type checking program ..
+  type error!! 
