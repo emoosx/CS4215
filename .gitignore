@@ -1,0 +1,17 @@
+*.annot
+*.cmo
+*.cma
+*.cmi
+*.a
+*.out
+*.cmx
+*.cmxs
+*.cmxa
+
+_build/
+
+*.byte
+*.native
+
+*.zip
+*.pdf

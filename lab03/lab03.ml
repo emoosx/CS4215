@@ -254,7 +254,9 @@ let bt1 = Node (1,(Leaf 2),Node (3,(Leaf 4),(Leaf 5)));;
      countL (Node(0,(Leaf 0),Node(0,Leaf 0,Leaf 0))) ==> 3
 *)
 let rec countL (t:'a tree) : int =
-  -1
+  match t with
+  | Leaf _ -> 1
+  | Node (_, left, right) -> (countL left) + (countL right)
 ;;
 
 countL bt1;;
@@ -270,7 +272,9 @@ countL bt1;;
 *)
 
 let rec prefixBT (xs:'a tree) : 'a list =
-  []
+  match xs with
+  | Leaf x -> [x]
+  | Node (x, left, right) -> List.concat [[x]; (prefixBT left); (prefixBT right)]
 ;;
 
 prefixBT bt1;;
@@ -285,7 +289,9 @@ prefixBT bt1;;
      infixBT (Node(4,Leaf 1, Leaf 2)) ==> [1;4;2]
 *)
 let rec infixBT (xs:'a tree) : 'a list =
-  []
+  match xs with
+  | Leaf x -> [x]
+  | Node (x, left, right) -> List.concat [(infixBT left); [x]; (infixBT right)]
 ;;
 
 infixBT bt1;;
@@ -301,7 +307,10 @@ infixBT bt1;;
     perfectTree 2 ==> Node (1, Leaf 1, Leaf 1)
 *)
 let perfectTree n =
-  Leaf (-1)
+  let rec aux = function
+    | n when n = 1 -> Leaf 1
+    | n -> Node(1, aux (pred n), aux (pred n))
+  in aux n
 ;;
 
 perfectTree 3;;
