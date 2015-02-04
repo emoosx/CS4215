@@ -189,14 +189,14 @@ pfactors 315;;
 let pfactorsM (n:int) : (int * int) list =
   let factors = pfactors n in
   let tuplize xs = (List.hd xs, List.length xs) in
-  let group xs = 
-    let rec group_aux = function 
-      | [] -> []
-      | [x] -> [[x]]
-      | x :: xs ->
-          let ((y :: _) as ys) :: yss = group_aux xs in
-          if x = y then (x :: ys) :: yss else [x] :: ys :: yss
-    in group_aux xs
+  let group xs =
+    let groups =
+    List.fold_left (fun acc x -> match acc with
+      | [] -> [[x]]
+      | hd :: tl -> if (List.hd hd) = x then (x::hd)::tl else [x]::hd::tl) [] xs
+    in match groups with
+    | [] -> []
+    | l -> List.rev l
   in List.map (tuplize) (group factors)
 ;;
 
