@@ -16,18 +16,26 @@ let trans_cmd op =
     | "=" -> EQ
     | _ -> failwith ("no such operator "^op)
 
+let int_of_bool (b:bool) : int =
+  match b with
+  | true -> 1
+  | false -> 0
+;;
+               
 (* compiling to eVML instrs *)
 let compile (e:ePL_expr) : eVML_inst list =
   let rec helper e =
     match e with
       | IntConst i -> [LDCI i]
-      | BoolConst b -> 
-            failwith "TO BE IMPLEMENTED"
+      | BoolConst b -> [LDCB (int_of_bool b)] 
       | UnaryPrimApp (op,arg) ->
             let s = helper arg in
             s@[trans_cmd op]
       | BinaryPrimApp (op,arg1,arg2) ->
-            failwith "TO BE IMPLEMENTED"
+         let s1 = helper arg1 in
+         let s2 = helper arg2 in
+         s1 @ s2 @ [trans_cmd op]
+            (* failwith "TO BE IMPLEMENTED" *)
   in
   (helper e)@[DONE]
 

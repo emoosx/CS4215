@@ -13,6 +13,11 @@ let testReadBytecode filename =
   print_endline ("Bytecode Read from "^filename);
   print_endline ("eVML : "^(string_of_eVML_list elist))
 
+let int_of_bool (b:bool) : int =
+  match b with
+  | true -> 1
+  | false -> 0
+
 (* binary operator over integer values *)
 let binary_operate (c:eVML_inst) (a1:int) (a2:int) : int =
   match c with
@@ -20,24 +25,18 @@ let binary_operate (c:eVML_inst) (a1:int) (a2:int) : int =
     | MINUS -> a1+a2
     | TIMES -> a1*a2
     | DIV -> a1/a2
-    | OR -> 
-          failwith "TO BE IMPLEMENTED"
-    | AND -> 
-          failwith "TO BE IMPLEMENTED"
-    | EQ -> 
-          failwith "TO BE IMPLEMENTED"
-    | LT -> 
-          failwith "TO BE IMPLEMENTED"
-    | GT -> 
-          failwith "TO BE IMPLEMENTED"
+    | OR -> a1 lor a2
+    | AND -> a1 land a2
+    | EQ -> int_of_bool(a1=a2)
+    | LT -> int_of_bool(a1<a2)
+    | GT -> int_of_bool(a1>a2)
     | _ -> failwith "not possible"
 
 (* unary operator over integer values *)
 let unary_operate (c:eVML_inst) (a1:int) : int =
   match c with
     | NEG -> -a1
-    | NOT -> 
-          failwith "TO BE IMPLEMENTED"
+    | NOT -> lnot a1
     | _ -> failwith "not possible"
 
 (* perform operation over a stack *)
@@ -47,9 +46,9 @@ let proc_inst (stk:int Stack.t) (c:eVML_inst) : unit =
     | LDCI i -> Stack.push i stk
     | LDCB i -> Stack.push i stk
     | PLUS | MINUS | TIMES | DIV | AND | OR 
-    | GT | LT | EQ
-          -> 
-          failwith "TO BE IMPLEMENTED"
+    | GT | LT | EQ -> let a2 = Stack.pop stk in
+                     let a1 = Stack.pop stk in
+                     Stack.push (binary_operate c a1 a2) stk
     | NEG | NOT -> 
           let a1 = Stack.pop stk in
           Stack.push (unary_operate c a1) stk
