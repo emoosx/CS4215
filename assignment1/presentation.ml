@@ -26,6 +26,7 @@ let num = 3 in
 let denom = 4 in
 ratio ~num ~denom;; (* - : float = 0.75 *)
 
+
 (*
  * Inference of labeled arguments
  *)
