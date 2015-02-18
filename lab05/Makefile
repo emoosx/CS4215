@@ -15,7 +15,7 @@ compile: ePL.ml ePL_compile.ml eVM_exec.ml
 	./eplc $<
 	./evm $(basename $<) > $@
 
-check: $(OUTPUT)
+check: compile $(OUTPUT)
 	@echo " #### Testing for equality ####"
 	for i in $(basename $(FILENAMES)); do \
 	 	echo "$$i diff result--";\

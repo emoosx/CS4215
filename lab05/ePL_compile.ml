@@ -35,7 +35,6 @@ let compile (e:ePL_expr) : eVML_inst list =
          let s1 = helper arg1 in
          let s2 = helper arg2 in
          s1 @ s2 @ [trans_cmd op]
-            (* failwith "TO BE IMPLEMENTED" *)
   in
   (helper e)@[DONE]
 
