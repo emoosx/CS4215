@@ -89,6 +89,83 @@ let test_extract_filename () =
 
 (* test_extr_filename ();; *)
 
+let rec type_check (e:ePL_expr) (t:ePL_type) : bool =
+  match e,t with
+    | IntConst _, IntType -> true
+    | BoolConst _, BoolType -> true
+    | UnaryPrimApp (op,arg), _ ->
+          (* please complete *)
+          begin
+          match op,t with
+            | "~",IntType 
+                  -> type_check arg IntType
+            | "\\",BoolType 
+                  -> type_check arg BoolType
+            | _,_ 
+                  -> false
+          end
+    | BinaryPrimApp (op,arg1,arg2), _ ->
+          begin
+          match op,t with
+            | "+",IntType | "-",IntType | "*",IntType | "/",IntType 
+                  -> (type_check arg1 IntType) && (type_check arg2 IntType)
+            | "<",BoolType | ">",BoolType 
+                  -> (type_check arg1 IntType) && (type_check arg2 IntType)
+            | "=",BoolType 
+                  -> ((type_check arg1 IntType) && (type_check arg2 IntType)) ||
+                     ((type_check arg1 BoolType) && (type_check arg2 BoolType))
+            | "|",BoolType | "&",BoolType 
+                  -> (type_check arg1 BoolType) && (type_check arg2 BoolType)
+            | _,_ -> false
+          end
+    | _, _ -> false
+
+(* type inference, note that None is returned 
+   if no suitable type is inferred *)
+let type_infer (e:ePL_expr) : ePL_type option =
+  match e with
+    | IntConst _ -> Some IntType
+    | BoolConst _ -> Some BoolType
+    | UnaryPrimApp (op,arg) ->
+          begin
+          match op with
+            | "~" -> 
+                  if (type_check arg IntType) then Some IntType
+                  else None
+            | "\\" ->
+                  if (type_check arg BoolType) then Some BoolType else None
+            | _ -> None
+          end
+    | BinaryPrimApp (op,arg1,arg2) ->
+          begin
+          match op with
+            | "-" | "+" | "*" | "/"  -> 
+                  if (type_check arg1 IntType) && (type_check arg2 IntType) 
+                  then Some IntType
+                  else None
+            | "<" | ">" ->
+                if (type_check arg1 IntType) && (type_check arg2 IntType)
+                then Some BoolType
+                else None
+            | "=" ->
+                if ((type_check arg1 IntType) && (type_check arg2 IntType)) ||
+                  ((type_check arg1 BoolType) && (type_check arg2 BoolType)) then
+                  Some BoolType
+                else None
+            | "&" | "|" ->
+                if (type_check arg1 BoolType) && (type_check arg2 BoolType)
+                then Some BoolType
+                else None
+            | _ -> None
+          end
+
+let testType e =
+  (* let s = (string_of_ePL e) in *)
+  let v = type_infer e in
+  match v with 
+    | Some t -> print_endline ("  inferred type : "^(string_of_ePL_type t));
+    | None -> print_endline ("  type error ")
+
 (* main program *)
 let main =
   (* Read the arguments of command *)
@@ -98,8 +175,8 @@ let main =
   let (s,p) = parse_file !file in
   let _ = print_endline ("  "^s) in
   let _ = print_endline ("  as "^(string_of_ePL p)) in
-  (* let _ = print_endline "Type checking program .." in *)
-  (* let _ = testType p in *)
+  let _ = print_endline "Type checking program .." in
+  let _ = testType p in
   let r = compile p in
   let fn = extract_filename !file in
   let bytefn = fn^".evm" in

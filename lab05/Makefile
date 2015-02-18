@@ -6,7 +6,7 @@ all: clean compile $(OUTPUT)
 	@echo "done"
 
 clean:
-	rm *.out
+	rm test/*.out
 
 compile: ePL.ml ePL_compile.ml eVM_exec.ml
 	./bincomp5.sh
@@ -18,6 +18,7 @@ compile: ePL.ml ePL_compile.ml eVM_exec.ml
 check: compile $(OUTPUT)
 	@echo " #### Testing for equality ####"
 	for i in $(basename $(FILENAMES)); do \
+		$$i.out;\
 	 	echo "$$i diff result--";\
 	 	diff test/$$i.out test/out.$$i | colordiff;\
 	done

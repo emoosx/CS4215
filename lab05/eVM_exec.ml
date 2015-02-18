@@ -24,7 +24,7 @@ let binary_operate (c:eVML_inst) (a1:int) (a2:int) : int =
     | PLUS -> a1+a2
     | MINUS -> a1-a2
     | TIMES -> a1*a2
-    | DIV -> a1/a2
+    | DIV -> if(a2<>0) then (a1/a2) else failwith "Error! Division by Zero"
     | OR -> a1 lor a2
     | AND -> a1 land a2
     | EQ -> int_of_bool(a1=a2)
@@ -36,7 +36,7 @@ let binary_operate (c:eVML_inst) (a1:int) (a2:int) : int =
 let unary_operate (c:eVML_inst) (a1:int) : int =
   match c with
     | NEG -> -a1
-    | NOT -> 1 - a1
+    | NOT -> lnot a1
     | _ -> failwith "not possible"
 
 (* perform operation over a stack *)
