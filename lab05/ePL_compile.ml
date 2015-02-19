@@ -39,9 +39,10 @@ let compile (e:ePL_expr) : eVML_inst list =
   (helper e)@[DONE]
 
 (* output evm bytecode to a file *)
-let generate_bytecode(elist: eVML_inst list) (filename:string) = 
+let generate_bytecode(elist: eVML_inst list) (filename:string) =
   let out_channel = open_out_bin filename in
-  output_value out_channel (Array.of_list elist);
+  let arr = (Array.of_list elist) in
+  output_value out_channel arr;
   close_out out_channel
 
 
